@@ -1,7 +1,7 @@
 [project]
 name = "cyberbullying-detection"
 version = "0.1.0"
-description = "Add your description here"
+description = "The package fits a model to predict texts that contain cyberbullying."
 readme = "README.md"
 authors = [
     { name = "Dmitry Karasev", email = "dakarasev@edu.hse.ru" }
@@ -15,3 +15,61 @@ cyberbullying-detection = "cyberbullying_detection:main"
 [build-system]
 requires = ["uv_build>=0.9.7,<0.10.0"]
 build-backend = "uv_build"
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.uv.sources]
+torch = [
+  { index = "pytorch-cu128", marker = "sys_platform == 'linux' or sys_platform == 'win32'" },
+]
+
+[tool.ruff]
+line-length = 100
+format = { docstring-code-format = true }
+
+[tool.ruff.lint]
+select = [
+    # pycodestyle
+    "E", "W",
+    # Pyflakes
+    "F",
+    # pyupgrade
+    "UP",
+    # flake8-bugbear
+    "B",
+    # flake8-simplify
+    "SIM",
+    # isort
+    "I",
+    # flake8-builtins
+    "A",
+    # flake8-return
+    "RET",
+    # flake8-use-pathlib
+    "PTH",
+    # flynt
+    "FLY",
+    # mccabe
+    "C90",
+    # numpy
+    "NPY",
+    # pep8-naming
+    "N",
+    # Ruff
+    "RUF",
+    # Pylint
+    "PL",
+    # refurb
+    "FURB",
+]
+
+pycodestyle = { max-doc-length = 105 }
+
+[dependency-groups]
+dev = [
+    "fire>=0.7.1",
+    "pre-commit>=4.5.0",
+]
