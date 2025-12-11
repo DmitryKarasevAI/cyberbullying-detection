@@ -1,0 +1,17 @@
+[project]
+name = "cyberbullying-detection"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Dmitry Karasev", email = "dakarasev@edu.hse.ru" }
+]
+requires-python = ">=3.13"
+dependencies = []
+
+[project.scripts]
+cyberbullying-detection = "cyberbullying_detection:main"
+
+[build-system]
+requires = ["uv_build>=0.9.7,<0.10.0"]
+build-backend = "uv_build"
