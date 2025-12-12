@@ -7,7 +7,10 @@ authors = [
     { name = "Dmitry Karasev", email = "dakarasev@edu.hse.ru" }
 ]
 requires-python = ">=3.13"
-dependencies = []
+dependencies = [
+    "dvc>=3.64.2",
+    "lightning>=2.6.0",
+]
 
 [project.scripts]
 cyberbullying-detection = "cyberbullying_detection:main"
