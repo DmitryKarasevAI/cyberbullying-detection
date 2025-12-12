@@ -1,0 +1,5 @@
+[core]
+    remote = cyberbullying-remote
+['remote "cyberbullying-remote"']
+    url = s3://cyberbullying-remote
+    endpointurl = https://storage.yandexcloud.net
