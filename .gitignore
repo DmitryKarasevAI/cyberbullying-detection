@@ -11,6 +11,5 @@ wheels/
 
 .python-version
 
-*.ipynb
-cyberbullying_tweets.csv
+
 /data
