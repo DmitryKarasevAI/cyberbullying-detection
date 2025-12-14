@@ -1,26 +1,27 @@
 import torch
+from omegaconf import DictConfig
 from torch import nn
 
 
 class AttnMLPBlock(nn.Module):
-    def __init__(self, d_model: int, n_heads: int, d_ff: int, dropout: float = 0.1):
+    def __init__(self, cfg: DictConfig):
         super().__init__()
-        self.ln1 = nn.LayerNorm(d_model)
+        self.ln1 = nn.LayerNorm(cfg.d_model)
         self.attn = nn.MultiheadAttention(
-            embed_dim=d_model,
-            num_heads=n_heads,
-            dropout=dropout,
+            embed_dim=cfg.d_model,
+            num_heads=cfg.n_heads,
+            dropout=cfg.dropout,
             batch_first=True,
         )
-        self.drop1 = nn.Dropout(dropout)
+        self.drop1 = nn.Dropout(cfg.dropout)
 
-        self.ln2 = nn.LayerNorm(d_model)
+        self.ln2 = nn.LayerNorm(cfg.d_model)
         self.mlp = nn.Sequential(
-            nn.Linear(d_model, d_ff),
+            nn.Linear(cfg.d_model, cfg.d_ff),
             nn.GELU(),
-            nn.Dropout(dropout),
-            nn.Linear(d_ff, d_model),
-            nn.Dropout(dropout),
+            nn.Dropout(cfg.dropout),
+            nn.Linear(cfg.d_ff, cfg.d_model),
+            nn.Dropout(cfg.dropout),
         )
 
     def forward(self, x: torch.Tensor, key_padding_mask: torch.Tensor | None = None):
@@ -32,26 +33,15 @@ class AttnMLPBlock(nn.Module):
 
 
 class SimpleAttnMLP(nn.Module):
-    def __init__(  # noqa: PLR0913
-        self,
-        vocab_size: int,
-        d_model: int = 128,
-        n_heads: int = 4,
-        d_ff: int = 256,
-        n_layers: int = 2,
-        dropout: float = 0.1,
-        n_classes: int = 2,
-    ):
+    def __init__(self, vocab_size: int, cfg: DictConfig):
         super().__init__()
-        self.emb = nn.Embedding(vocab_size, d_model)
-        self.drop = nn.Dropout(dropout)
+        self.emb = nn.Embedding(vocab_size, cfg.d_model)
+        self.drop = nn.Dropout(cfg.dropout)
 
-        self.blocks = nn.ModuleList(
-            [AttnMLPBlock(d_model, n_heads, d_ff, dropout=dropout) for _ in range(n_layers)]
-        )
+        self.blocks = nn.ModuleList([AttnMLPBlock(cfg) for _ in range(cfg.n_layers)])
 
-        self.ln_out = nn.LayerNorm(d_model)
-        self.head = nn.Linear(d_model, n_classes)
+        self.ln_out = nn.LayerNorm(cfg.d_model)
+        self.head = nn.Linear(cfg.d_model, cfg.n_classes)
 
     def forward(self, tokens: torch.Tensor, pad_mask: torch.Tensor | None = None):
         x = self.drop(self.emb(tokens))

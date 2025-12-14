@@ -1,7 +1,8 @@
 from typing import Any
 
-import pytorch_lightning as L  # noqa: N812
+import lightning as L  # noqa: N812
 from datasets import load_dataset
+from omegaconf import DictConfig
 from torch.utils.data import DataLoader
 from transformers import AutoTokenizer
 
@@ -11,34 +12,54 @@ def init_dataloader(dataset: Any, batch_size: int, shuffle: bool, num_workers: i
 
 
 class CyberbullyingDataModule(L.LightningDataModule):
-    def __init__(  # noqa: PLR0913
+    def __init__(
         self,
-        model_name="bert-base-uncased",
-        train_batch_size=32,
-        predict_batch_size=64,
-        train_data_path="/data/data_train.csv",
-        val_data_path="/data/data_val.csv",
-        test_data_path="/data/data_test.csv",
-        text_column_name="tweet_text",
-        label_column_name="label",
+        cfg: DictConfig,
     ):
         super().__init__()
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-        self.train_batch_size = train_batch_size
-        self.predict_batch_size = predict_batch_size
-        self.train_data_path = train_data_path
-        self.val_data_path = val_data_path
-        self.test_data_path = test_data_path
-        self.text_column_name = text_column_name
-        self.label_column_name = label_column_name
+        self.tokenizer = AutoTokenizer.from_pretrained(cfg.model_name)
+        self.train_batch_size = cfg.train_batch_size
+        self.predict_batch_size = cfg.predict_batch_size
+        self.train_data_path = cfg.train_data_path
+        self.val_data_path = cfg.val_data_path
+        self.test_data_path = cfg.test_data_path
+        self.text_column_name = cfg.text_column_name
+        self.label_column_name = cfg.label_column_name
+        self.label2id = None
+
+    def create_label_map(self, dataset):
+        if self.label2id is not None:
+            return
+        uniq = dataset.unique(self.label_column_name)
+
+        try:
+            uniq_sorted = sorted(uniq)
+        except TypeError:
+            uniq_sorted = sorted([str(x) for x in uniq])
+
+        self.label2id = {lbl: i for i, lbl in enumerate(uniq_sorted)}
+
+    def encode_labels(self, examples):
+        labels = examples[self.label_column_name]
+        return {self.label_column_name: [self.label2id[lbl] for lbl in labels]}
 
     def setup(self, stage: str | None = None):
         if stage is None or stage == "fit":
             train_dd = load_dataset("csv", data_files={"train": self.train_data_path})
             val_dd = load_dataset("csv", data_files={"train": self.val_data_path})
 
-            self.train_dataset = train_dd["train"].map(self.tokenize_function, batched=True)
-            self.val_dataset = val_dd["train"].map(self.tokenize_function, batched=True)
+            self.create_label_map(train_dd["train"])
+
+            self.train_dataset = (
+                train_dd["train"]
+                .map(self.encode_labels, batched=True)
+                .map(self.tokenize_function, batched=True)
+            )
+            self.val_dataset = (
+                val_dd["train"]
+                .map(self.encode_labels, batched=True)
+                .map(self.tokenize_function, batched=True)
+            )
 
             self.train_dataset.set_format(
                 type="torch", columns=["input_ids", "attention_mask", self.label_column_name]
