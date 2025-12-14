@@ -2,22 +2,6 @@ import torch
 from torch import nn
 
 
-class SimpleClassifier(torch.nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.model = torch.nn.Sequential(
-            torch.nn.Linear(3 * 96 * 96, 256),
-            torch.nn.ReLU(),
-            torch.nn.Linear(256, 128),
-            torch.nn.ReLU(),
-            torch.nn.Linear(128, 2),
-            torch.nn.Softmax(dim=1),
-        )
-
-    def forward(self, x):
-        return self.model(x)
-
-
 class AttnMLPBlock(nn.Module):
     def __init__(self, d_model: int, n_heads: int, d_ff: int, dropout: float = 0.1):
         super().__init__()
