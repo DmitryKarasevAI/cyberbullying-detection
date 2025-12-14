@@ -1,0 +1,9 @@
+defaults:
+  - data: data_conf
+  - logging: logging_conf
+  - model: model_conf
+  - module: module_conf
+  - _self_
+
+num_epochs: 10
+output_file: ${.data.train_batch_size}_${.module.lr}_${.model.d_model}_${.model.n_heads}_${.model.d_ff}_${.model.n_layers}_${.model.dropout}.pth

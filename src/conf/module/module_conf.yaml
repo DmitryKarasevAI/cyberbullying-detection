@@ -1,0 +1,3 @@
+num_classes: 6
+label_key: cyberbullying_type
+lr: 0.001
