@@ -8,7 +8,7 @@ from cyberbullying_detection.model import SimpleAttnMLP
 from cyberbullying_detection.module import CyberbullyingModule
 
 
-@hydra.main(version_base=None, config_path="../conf", config_name="conf")
+@hydra.main(version_base=None, config_path="../../configs", config_name="conf")
 def train(cfg: DictConfig):
     datamodule = CyberbullyingDataModule(cfg.data)
     model = SimpleAttnMLP(
