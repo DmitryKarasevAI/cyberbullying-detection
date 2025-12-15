@@ -17,3 +17,6 @@ wheels/
 *.pth
 */cyberbullying_detection/outputs
 /outputs
+/mlruns
+/1
+mlflow.db

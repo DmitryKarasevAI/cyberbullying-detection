@@ -26,6 +26,7 @@ class CyberbullyingDataModule(L.LightningDataModule):
         self.text_column_name = cfg.text_column_name
         self.label_column_name = cfg.label_column_name
         self.label2id = None
+        self.num_workers = cfg.num_workers
 
     def create_label_map(self, dataset):
         if self.label2id is not None:
@@ -82,17 +83,17 @@ class CyberbullyingDataModule(L.LightningDataModule):
             truncation=True,
         )
 
-    def train_dataloader(self, cfg: DictConfig):
+    def train_dataloader(self):
         return init_dataloader(
-            self.train_dataset, self.train_batch_size, shuffle=True, num_workers=cfg.num_workers
+            self.train_dataset, self.train_batch_size, shuffle=True, num_workers=self.num_workers
         )
 
-    def val_dataloader(self, cfg: DictConfig):
+    def val_dataloader(self):
         return init_dataloader(
-            self.val_dataset, self.predict_batch_size, shuffle=False, num_workers=cfg.num_workers
+            self.val_dataset, self.predict_batch_size, shuffle=False, num_workers=self.num_workers
         )
 
-    def test_dataloader(self, cfg: DictConfig):
+    def test_dataloader(self):
         return init_dataloader(
-            self.test_dataset, self.predict_batch_size, shuffle=False, num_workers=cfg.num_workers
+            self.test_dataset, self.predict_batch_size, shuffle=False, num_workers=self.num_workers
         )

@@ -8,6 +8,7 @@ from torch import nn
 class CyberbullyingModule(L.LightningModule):
     def __init__(self, model: nn.Module, cfg: DictConfig):
         super().__init__()
+        self.save_hyperparameters(ignore=["model"])
         self.model = model
         self.criterion = nn.CrossEntropyLoss()
         self.val_accuracy = torchmetrics.Accuracy(task="multiclass", num_classes=cfg.num_classes)
