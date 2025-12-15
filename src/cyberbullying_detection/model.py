@@ -25,8 +25,10 @@ class AttnMLPBlock(nn.Module):
         )
 
     def forward(self, x: torch.Tensor, key_padding_mask: torch.Tensor | None = None):
-        h = self.ln1(x)
-        attn_out, _ = self.attn(h, h, h, key_padding_mask=key_padding_mask, need_weights=False)
+        hidden = self.ln1(x)
+        attn_out, _ = self.attn(
+            hidden, hidden, hidden, key_padding_mask=key_padding_mask, need_weights=False
+        )
         x = x + self.drop1(attn_out)
 
         return x + self.mlp(self.ln2(x))

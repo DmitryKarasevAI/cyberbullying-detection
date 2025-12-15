@@ -14,7 +14,8 @@ from cyberbullying_detection.module import CyberbullyingModule
 @hydra.main(version_base=None, config_path="../../configs", config_name="conf")
 def train(cfg: DictConfig):
     if not all(
-        (Path("data") / f).exists() for f in ("data_train.csv", "data_val.csv", "data_test.csv")
+        (Path("data") / file).exists()
+        for file in ("data_train.csv", "data_val.csv", "data_test.csv")
     ):
         subprocess.run(["dvc", "pull", "-r", "cyberbullying-remote", "data"], check=True)
 
