@@ -6,3 +6,4 @@ val_data_path: data/data_val.csv
 test_data_path: data/data_test.csv
 text_column_name: tweet_text
 label_column_name: cyberbullying_type
+num_workers: 6

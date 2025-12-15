@@ -82,11 +82,17 @@ class CyberbullyingDataModule(L.LightningDataModule):
             truncation=True,
         )
 
-    def train_dataloader(self):
-        return init_dataloader(self.train_dataset, self.train_batch_size, shuffle=True)
+    def train_dataloader(self, cfg: DictConfig):
+        return init_dataloader(
+            self.train_dataset, self.train_batch_size, shuffle=True, num_workers=cfg.num_workers
+        )
 
-    def val_dataloader(self):
-        return init_dataloader(self.val_dataset, self.predict_batch_size, shuffle=False)
+    def val_dataloader(self, cfg: DictConfig):
+        return init_dataloader(
+            self.val_dataset, self.predict_batch_size, shuffle=False, num_workers=cfg.num_workers
+        )
 
-    def test_dataloader(self):
-        return init_dataloader(self.test_dataset, self.predict_batch_size, shuffle=False)
+    def test_dataloader(self, cfg: DictConfig):
+        return init_dataloader(
+            self.test_dataset, self.predict_batch_size, shuffle=False, num_workers=cfg.num_workers
+        )
