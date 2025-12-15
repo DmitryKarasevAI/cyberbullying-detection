@@ -1,8 +1,8 @@
 model_name: bert-base-uncased
 train_batch_size: 128
 predict_batch_size: 1024
-train_data_path: ../../data/data_train.csv
-val_data_path: ../../data/data_val.csv
-test_data_path: ../../data/data_test.csv
+train_data_path: data/data_train.csv
+val_data_path: data/data_val.csv
+test_data_path: data/data_test.csv
 text_column_name: tweet_text
 label_column_name: cyberbullying_type
